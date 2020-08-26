@@ -33,6 +33,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     //to find the location of the widget inside the Widget Tree of the app
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       //returns a class that make use of developing theme for the app
       home: MyHomePage(),
     );
@@ -59,6 +60,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final String url = "http://3.17.60.171/";
   List<String> data;
+
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<
       ScaffoldState>(); //create a Global key instance and assign it to the Scaffold Widget
   String currentTemp = ''; //temperature value initializing
@@ -95,8 +97,13 @@ class _MyHomePageState extends State<MyHomePage> {
       s = s.replaceAll("each_vehicele:", "").trim();
       s = s.replaceAll("Total_Vehicle :", "").trim();
       s = s.replaceAll("Waiting time:", "").trim();
+      s = s.replaceAll("Total waiting time:", "").trim();
+      s = s.replaceAll("Total No.of Vehicles:", "").trim();
       print(s);
       tempData.add(s);
+    }
+    if (tempData[0].length > 4) {
+      tempData[0] = tempData[0].substring(0, 4);
     }
     data = tempData;
   }
@@ -179,7 +186,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                           ),
                           Text(
-                            data[0].substring(0, 3) + " min",
+                            data[0] + " min",
                             style: TextStyle(
                               color: Colors.yellow,
                               fontWeight: FontWeight.bold,
@@ -228,6 +235,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   onPressed: () async {
                     //button event and async function
                     try {
+                      print("tap");
                       setState(() {
                         this.getJsonData();
                       });
