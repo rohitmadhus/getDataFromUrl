@@ -10,6 +10,7 @@
 import 'dart:async'; //asynchronous task
 import 'dart:convert'; //conversion of data format
 import 'dart:io';
+import 'dart:math';
 import 'package:flutter/material.dart'; //contains flutter widget to implement material widgets and material theme widgets
 import 'package:http/http.dart'
     as http; //contains functionality and classes to access http
@@ -58,8 +59,9 @@ class MyHomePage extends StatefulWidget {
 */
 
 class _MyHomePageState extends State<MyHomePage> {
-  final String url = "http://3.17.60.171/";
+  final String url = "http://18.216.31.224/";
   List<String> data;
+  List<String> timeData;
 
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<
       ScaffoldState>(); //create a Global key instance and assign it to the Scaffold Widget
@@ -105,6 +107,20 @@ class _MyHomePageState extends State<MyHomePage> {
     if (tempData[0].length > 4) {
       tempData[0] = tempData[0].substring(0, 4);
     }
+    var sec;
+    List<String> newTimeData =
+        tempData[0].toString().trim().toString().split(".");
+    if (newTimeData.length > 1) {
+      print("sec" + newTimeData[1]);
+      sec = (int.parse(newTimeData[1]) * 60);
+      print(sec);
+      sec = sec / pow(10, newTimeData[1].length);
+      print(sec);
+      newTimeData[1] =
+          sec.toString().substring(0, 2).replaceAll(".", "").trim();
+    }
+
+    timeData = newTimeData;
     data = tempData;
   }
 
@@ -131,176 +147,204 @@ class _MyHomePageState extends State<MyHomePage> {
               fit: BoxFit.cover, //fits the widget
             ),
           ),
-          child: Column(
-            //widget alignment should be in vertical
-            mainAxisAlignment: MainAxisAlignment.center, //main axis alignment
-            children: [
-              Icon(
-                //assigning icon to the widget
-                Icons.timer, //icon type
-                color: Colors.white, //icon color
-                size: 50.0, //icon size
-              ),
-              //sub widget of Column widget
-              Text(
-                _timeString, //time value assign
-                textAlign: TextAlign.center, //text alignment of time
-                style: TextStyle(
-                    //text style
-                    color: Colors.black, //font color
-                    fontSize: 25.0,
-                    fontWeight: FontWeight.bold
-                    //font size
-                    ),
-              ),
-              SizedBox(
-                  height:
-                      50.0), //spacing between first widget to the next widget
-              Text(
-                currentTemp == ''
-                    ? ''
-                    : 'Temperature is $currentTemp °C', //displaying temperature in text
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 30.0,
-                  fontWeight: FontWeight.bold,
+          child: SingleChildScrollView(
+            child: Column(
+              //widget alignment should be in vertical
+              mainAxisAlignment: MainAxisAlignment.center, //main axis alignment
+              children: [
+                SizedBox(
+                  height: 100,
                 ),
-              ),
-              Icon(
-                //assigning icon to the widget
-                Icons.time_to_leave, //icon type
-                color: Colors.white, //icon color
-                size: 50.0, //icon size
-              ),
-              SizedBox(height: 20.0),
-              Container(
-                child: data.length == 0
-                    ? Text("")
-                    : Column(
-                        children: <Widget>[
-                          Text(
-                            "Average waiting time of X traffic signal",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                            ),
-                          ),
-                          Text(
-                            data[0] + " min",
-                            style: TextStyle(
-                              color: Colors.yellow,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 17,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(40, 5, 40, 5),
-                            child: Divider(
-                              color: Colors.white,
-                            ),
-                          ),
-                          Text(
-                            "Total No. of vehicle already standing",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                            ),
-                          ),
-                          Text(data[1],
-                              style: TextStyle(
-                                  color: Colors.yellow,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold)),
-                          SizedBox(
-                            height: 10,
-                          )
-                        ],
+                Icon(
+                  //assigning icon to the widget
+                  Icons.timer, //icon type
+                  color: Colors.white, //icon color
+                  size: 50.0, //icon size
+                ),
+                //sub widget of Column widget
+                Text(
+                  _timeString, //time value assign
+                  textAlign: TextAlign.center, //text alignment of time
+                  style: TextStyle(
+                      //text style
+                      color: Colors.black, //font color
+                      fontSize: 25.0,
+                      fontWeight: FontWeight.bold
+                      //font size
                       ),
-              ),
-              //Text(data),
-              RaisedButton(
-                  //adding button widget
-                  shape: RoundedRectangleBorder(
-                    //button shape
-                    borderRadius:
-                        BorderRadius.circular(20.0), //button border radius
+                ),
+                SizedBox(
+                    height:
+                        50.0), //spacing between first widget to the next widget
+                Text(
+                  currentTemp == ''
+                      ? ''
+                      : 'Temperature is $currentTemp °C', //displaying temperature in text
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 30.0,
+                    fontWeight: FontWeight.bold,
                   ),
-                  color: Colors.redAccent.shade100, //button color
-                  child: Text(
-                    'Click to view',
-                    style: TextStyle(
-                      color: Colors.white,
+                ),
+                Icon(
+                  //assigning icon to the widget
+                  Icons.time_to_leave, //icon type
+                  color: Colors.white, //icon color
+                  size: 50.0, //icon size
+                ),
+                SizedBox(height: 20.0),
+                Container(
+                  child: data.length == 0
+                      ? Text("")
+                      : Column(
+                          children: <Widget>[
+                            Text(
+                              "Average waiting time of X traffic signal",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Padding(
+                                    padding: const EdgeInsets.all(5),
+                                    child: timeData[0] == "0" ||
+                                            timeData[0] == null
+                                        ? Text("")
+                                        : Text(timeData[0] + " min",
+                                            style: TextStyle(
+                                              color: Colors.yellow,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 17,
+                                            ))),
+                                Padding(
+                                  padding: const EdgeInsets.all(5),
+                                  child: timeData.length == 1 ||
+                                          timeData[1] == "0" ||
+                                          timeData[1] == null
+                                      ? Text("")
+                                      : Text(
+                                          timeData[1] + " sec",
+                                          style: TextStyle(
+                                            color: Colors.yellow,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 17,
+                                          ),
+                                        ),
+                                ),
+                              ],
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(40, 5, 40, 5),
+                              child: Divider(
+                                color: Colors.white,
+                              ),
+                            ),
+                            Text(
+                              "Total No. of vehicle already standing",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                            ),
+                            Text(data[1],
+                                style: TextStyle(
+                                    color: Colors.yellow,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold)),
+                            SizedBox(
+                              height: 10,
+                            )
+                          ],
+                        ),
+                ),
+                //Text(data),
+                RaisedButton(
+                    //adding button widget
+                    shape: RoundedRectangleBorder(
+                      //button shape
+                      borderRadius:
+                          BorderRadius.circular(20.0), //button border radius
                     ),
-                  ),
-                  onPressed: () async {
-                    //button event and async function
-                    try {
-                      print("tap");
-                      setState(() {
-                        this.getJsonData();
-                      });
-                    } catch (exception) {
-                      //handles exception and display error at snackbar(bottom of the app)
-                      _scaffoldKey.currentState.showSnackBar(
-                          SnackBar(content: Text(exception.toString())));
-                    }
-                  }),
-              //   SizedBox(height: 10.0),
-              //   Icon(
-              //     Icons.flash_on,
-              //     color: Colors.white,
-              //     size: 50.0,
-              //   ),
-              //   RaisedButton(
-              //     shape: RoundedRectangleBorder(
-              //       borderRadius: BorderRadius.circular(20.0),
-              //     ),
-              //     color: Colors.redAccent.shade100,
-              //     child: Text(
-              //       'LED ON',
-              //       style: TextStyle(
-              //         color: Colors.white,
-              //       ),
-              //     ),
-              //     onPressed: () async {
-              //       try {
-              //         http.Response ledOn = await http.get(
-              //             'http://node-red-obgco.eu-gb.mybluemix.net/led-on');
-              //       } catch (exception) {
-              //         _scaffoldKey.currentState.showSnackBar(
-              //             SnackBar(content: Text(exception.toString())));
-              //       }
-              //     },
-              //   ),
-              //   SizedBox(height: 10.0),
-              //   Icon(
-              //     Icons.flash_off,
-              //     color: Colors.white,
-              //     size: 50.0,
-              //   ),
-              //   RaisedButton(
-              //     shape: RoundedRectangleBorder(
-              //       borderRadius: BorderRadius.circular(20.0),
-              //     ),
-              //     color: Colors.redAccent.shade100,
-              //     child: Text(
-              //       'LED OFF',
-              //       style: TextStyle(
-              //         color: Colors.white,
-              //       ),
-              //     ),
-              //     onPressed: () async {
-              //       try {
-              //         http.Response ledOff = await http.get(
-              //             'http://node-red-obgco.eu-gb.mybluemix.net/led-off');
-              //       } catch (exception) {
-              //         _scaffoldKey.currentState.showSnackBar(
-              //             SnackBar(content: Text(exception.toString())));
-              //       }
-              //     },
-              //   ),
-              //
-            ],
+                    color: Colors.redAccent.shade100, //button color
+                    child: Text(
+                      'Click to view',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                    onPressed: () async {
+                      //button event and async function
+                      try {
+                        print("tap");
+
+                        await this.getJsonData();
+                        setState(() {});
+                      } catch (exception) {
+                        //handles exception and display error at snackbar(bottom of the app)
+                        _scaffoldKey.currentState.showSnackBar(
+                            SnackBar(content: Text(exception.toString())));
+                      }
+                    }),
+                //   SizedBox(height: 10.0),
+                //   Icon(
+                //     Icons.flash_on,
+                //     color: Colors.white,
+                //     size: 50.0,
+                //   ),
+                //   RaisedButton(
+                //     shape: RoundedRectangleBorder(
+                //       borderRadius: BorderRadius.circular(20.0),
+                //     ),
+                //     color: Colors.redAccent.shade100,
+                //     child: Text(
+                //       'LED ON',
+                //       style: TextStyle(
+                //         color: Colors.white,
+                //       ),
+                //     ),
+                //     onPressed: () async {
+                //       try {
+                //         http.Response ledOn = await http.get(
+                //             'http://node-red-obgco.eu-gb.mybluemix.net/led-on');
+                //       } catch (exception) {
+                //         _scaffoldKey.currentState.showSnackBar(
+                //             SnackBar(content: Text(exception.toString())));
+                //       }
+                //     },
+                //   ),
+                //   SizedBox(height: 10.0),
+                //   Icon(
+                //     Icons.flash_off,
+                //     color: Colors.white,
+                //     size: 50.0,
+                //   ),
+                //   RaisedButton(
+                //     shape: RoundedRectangleBorder(
+                //       borderRadius: BorderRadius.circular(20.0),
+                //     ),
+                //     color: Colors.redAccent.shade100,
+                //     child: Text(
+                //       'LED OFF',
+                //       style: TextStyle(
+                //         color: Colors.white,
+                //       ),
+                //     ),
+                //     onPressed: () async {
+                //       try {
+                //         http.Response ledOff = await http.get(
+                //             'http://node-red-obgco.eu-gb.mybluemix.net/led-off');
+                //       } catch (exception) {
+                //         _scaffoldKey.currentState.showSnackBar(
+                //             SnackBar(content: Text(exception.toString())));
+                //       }
+                //     },
+                //   ),
+                //
+              ],
+            ),
           ),
         ),
       ),
